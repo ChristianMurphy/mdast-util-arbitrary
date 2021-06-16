@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ChristianMurphy/mdast-util-arbitrary/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/ChristianMurphy/mdast-util-arbitrary/actions/workflows/main.yml)
 
-Generate arbitrary, random, and valid [`mdast`](https://github.com/syntax-tree/mdast) with [`fast-check`](https://github.com/dubzzz/fast-check), useful for [property testing](https://en.wikipedia.org/wiki/Property_testing) `mdast` utils and `remark` plugins.
+Generate arbitrary, random, and valid [`mdast`](https://github.com/syntax-tree/mdast) with [`fast-check`](https://github.com/dubzzz/fast-check), useful for [property testing](https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237) [`mdast` utils](https://github.com/syntax-tree/mdast#list-of-utilities) and [`remark` plugins](https://github.com/remarkjs/remark/blob/main/doc/plugins.md#plugins).
 
 ## Install
 
