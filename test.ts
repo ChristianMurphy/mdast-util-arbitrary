@@ -19,7 +19,7 @@ test("no options with mdast-util-to-markdown", () => {
       const markdown = toMarkdownText(mdast);
       return typeof markdown === "string" && markdown.length > 1;
     }),
-    { numRuns: 10,  }
+    { numRuns: 10 }
   );
 });
 
