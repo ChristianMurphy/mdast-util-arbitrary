@@ -7,8 +7,8 @@ import { commonmark } from "./index.js";
 test("ensure arbitrary can be stringified", () => {
   fc.assert(
     fc.property(commonmark.Root, (mdast) => {
-      toString(mdast);
-      return true;
+      const markdown = toString(mdast);
+      return typeof markdown === "string" && markdown.length > 1;
     })
   );
 });
