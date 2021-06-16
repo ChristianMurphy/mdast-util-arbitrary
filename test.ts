@@ -45,7 +45,7 @@ test("includeData with mdast-util-to-markdown", () => {
 
 test("commonmark with remark-preset-lint-recommended", () => {
   fc.assert(
-    fc.property(commonmark({ includeData: true }).Root, (mdast) => {
+    fc.property(commonmark().Root, (mdast) => {
       remark().use(lintRecommended).runSync(mdast);
       return true;
     }),
@@ -55,7 +55,7 @@ test("commonmark with remark-preset-lint-recommended", () => {
 
 test("commonmark with remark-preset-lint-markdown-style-guide", () => {
   fc.assert(
-    fc.property(commonmark({ includeData: true }).Root, (mdast) => {
+    fc.property(commonmark().Root, (mdast) => {
       remark().use(lintStyleguide).runSync(mdast);
       return true;
     }),
@@ -65,7 +65,7 @@ test("commonmark with remark-preset-lint-markdown-style-guide", () => {
 
 test("commonmark with remark-preset-lint-consistent", () => {
   fc.assert(
-    fc.property(commonmark({ includeData: true }).Root, (mdast) => {
+    fc.property(commonmark().Root, (mdast) => {
       remark().use(lintConsistent).runSync(mdast);
       return true;
     }),
