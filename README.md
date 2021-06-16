@@ -39,7 +39,7 @@ Generating 100 mdast random mdast trees to see if the properties hold true.
 import { test } from "uvu";
 import toString from "mdast-util-to-markdown";
 import { assert, property } from "fast-check";
-import { commonmark } from "./index.js";
+import { commonmark } from "mdast-util-arbitrary";
 
 test("arbitrary mdast can be stringified", () => {
   assert(
