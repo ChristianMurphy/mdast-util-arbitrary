@@ -3,6 +3,7 @@
   "compilerOptions": {
     "module": "esnext",
     "lib": ["esnext"],
+    "target": "ES2016",
     "declaration": true,
     "sourceMap": true,
     "strict": true,
