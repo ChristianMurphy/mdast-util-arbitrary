@@ -1,0 +1,11 @@
+{
+  "include": ["index.ts", "test.ts"],
+  "compilerOptions": {
+    "module": "esnext",
+    "lib": ["esnext"],
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "node"
+  }
+}
