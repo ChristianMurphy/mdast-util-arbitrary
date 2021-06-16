@@ -6,7 +6,8 @@
   "sideEffects": false,
   "main": "index.js",
   "scripts": {
-    "test": "npm run clean && prettier --check . && node --loader ts-node/esm ./test.ts",
+    "test": "npm run clean && node --loader ts-node/esm ./test.ts",
+    "lint": "prettier --check .",
     "format": "prettier --write .",
     "clean": "rimraf \"./*.d.ts\" \"./*.js\" \"./*.map\"",
     "build": "npm run clean && patch-package && tsc",

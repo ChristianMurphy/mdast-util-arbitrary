@@ -37,8 +37,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build
+        run: npm run build
+
       - name: Test
         run: npm test
 
-      - name: Build
-        run: npm run build
+      - name: Lint
+        if: ${{ matrix.platform != 'windows-latest' }}
+        run: npm run lint
