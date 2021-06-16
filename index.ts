@@ -34,7 +34,7 @@ const data = () => option(dictionary(string(), jsonObject()));
 export const commonmark = letrec((next) => ({
   Root: record({
     type: constant("root"),
-    children: array(next("FlowContent")),
+    children: _array(next("FlowContent"), { minLength: 1, maxLength: 100 }),
     data: data(),
   }),
   FlowContent: oneof(
