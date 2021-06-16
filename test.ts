@@ -35,10 +35,13 @@ test("rootNodeMaxChildren with mdast-util-to-markdown", () => {
 
 test("includeData with mdast-util-to-markdown", () => {
   fc.assert(
-    fc.property(commonmark({ includeData: true, rootNodeMaxChildren: 10 }).Root, (mdast) => {
-      const markdown = toMarkdownText(mdast);
-      return typeof markdown === "string" && markdown.length > 1;
-    }),
+    fc.property(
+      commonmark({ includeData: true, rootNodeMaxChildren: 10 }).Root,
+      (mdast) => {
+        const markdown = toMarkdownText(mdast);
+        return typeof markdown === "string" && markdown.length > 1;
+      }
+    ),
     { numRuns: 10 }
   );
 });
