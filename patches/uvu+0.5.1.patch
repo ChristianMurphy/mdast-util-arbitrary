@@ -1,0 +1,13 @@
+diff --git a/node_modules/uvu/index.d.ts b/node_modules/uvu/index.d.ts
+index baa12c4..319c680 100644
+--- a/node_modules/uvu/index.d.ts
++++ b/node_modules/uvu/index.d.ts
+@@ -13,7 +13,7 @@ declare namespace uvu {
+ 		skip(name?: string, test?: Callback<T>): void;
+ 		before: Hook<T>;
+ 		after: Hook<T>
+-		run(): VoidFunction;
++		run(): () => void;
+ 	}
+ }
+ 

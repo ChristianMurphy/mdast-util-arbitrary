@@ -9,7 +9,7 @@
     "test": "npm run clean && prettier --check . && node --loader ts-node/esm ./test.ts",
     "format": "prettier --write .",
     "clean": "rimraf \"./*.d.ts\" \"./*.js\" \"./*.map\"",
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && patch-package && tsc",
     "prepare": "npm run build"
   },
   "repository": {
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "mdast-util-to-markdown": "^0.6.0",
+    "patch-package": "^6.0.0",
     "prettier": "^2.0.0",
     "rimraf": "^3.0.0",
     "ts-node": "^10.0.0",
