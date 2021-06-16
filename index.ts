@@ -29,165 +29,197 @@ const option = <T>(arb: Arbitrary<T>) => _option(arb, { nil: undefined });
 
 const referenceType = () =>
   oneof(constant("full"), constant("shortcut"), constant("collapsed"));
-const data = () => option(dictionary(string(), jsonObject()));
 
-export const commonmark = letrec((next) => ({
-  Root: record({
-    type: constant("root"),
-    children: _array(next("FlowContent"), { minLength: 1, maxLength: 100 }),
-    data: data(),
-  }),
-  FlowContent: oneof(
-    { depthFactor: 1, withCrossShrink: true },
-    next("Content"),
-    next("Blockquote"),
-    next("Code"),
-    next("Heading"),
-    next("HTML"),
-    next("List"),
-    next("ThematicBreak")
-  ),
-  Content: oneof(
-    { depthFactor: 1, withCrossShrink: true },
-    next("Paragraph"),
-    next("Definition")
-  ),
-  ListContent: next("ListItem"),
-  PhrasingContent: oneof(
-    // links cannot be nested
-    { maxDepth: 1, withCrossShrink: true },
-    next("StaticPhrasingContent")
-  ),
-  StaticPhrasingContent: oneof(
-    { depthFactor: 1, withCrossShrink: true },
-    // terminal nodes
-    oneof(
-      { depthFactor: 0, withCrossShrink: true },
-      next("Text"),
-      next("InlineCode"),
-      next("Break"),
-      next("Image"),
-      next("ImageReference")
+export interface CommonmarkAbitraryProps {
+  /**
+   * Whether to generate arbitrary `data` properties on nodes or not
+   *
+   * @defaultValue false
+   */
+  includeData?: boolean;
+
+  /**
+   * The maximum number of children the root node can have
+   *
+   * @defaultValue 100
+   */
+  rootNodeMaxChildren?: number;
+}
+
+/**
+ * Arbitrary commonmark mdast generator
+ * @param options arbitrary constraints
+ * @returns arbitrary generator
+ */
+export const commonmark = ({
+  includeData = false,
+  rootNodeMaxChildren = 100,
+}: CommonmarkAbitraryProps = {}) => {
+  const data = includeData
+    ? () => option(dictionary(string(), jsonObject()))
+    : () => constant(undefined);
+
+  return letrec((next) => ({
+    Root: record({
+      type: constant("root"),
+      children: _array(next("FlowContent"), {
+        minLength: 1,
+        maxLength: rootNodeMaxChildren,
+      }),
+      data: data(),
+    }),
+    FlowContent: oneof(
+      { depthFactor: 0.5, withCrossShrink: true },
+      next("Content"),
+      next("Blockquote"),
+      next("Code"),
+      next("Heading"),
+      next("HTML"),
+      next("List"),
+      next("ThematicBreak")
     ),
-    // recursive nodes
-    next("Strong"),
-    next("Emphasis")
-  ),
-  Definition: record({
-    type: constant("definition"),
-    identifier: string(),
-    label: option(string()),
-    url: webUrl(),
-    title: option(string()),
-    data: data(),
-  }),
-  Paragraph: record({
-    type: constant("paragraph"),
-    children: array(next("PhrasingContent")),
-    data: data(),
-  }),
-  Text: record({
-    type: constant("text"),
-    value: string(),
-    data: data(),
-  }),
-  Strong: record({
-    type: constant("strong"),
-    children: array(next("StaticPhrasingContent")),
-    data: data(),
-  }),
-  Emphasis: record({
-    type: constant("emphasis"),
-    children: array(next("StaticPhrasingContent")),
-    data: data(),
-  }),
-  Break: record({
-    type: constant("break"),
-    data: data(),
-  }),
-  Image: record({
-    type: constant("image"),
-    url: webUrl(),
-    title: option(string()),
-    alt: option(string()),
-    data: data(),
-  }),
-  InlineCode: record({
-    type: constant("inlineCode"),
-    value: string(),
-    data: data(),
-  }),
-  ImageReference: record({
-    type: constant("imageReference"),
-    identifier: string(),
-    label: option(string()),
-    referenceType: referenceType(),
-    alt: option(string()),
-    data: data(),
-  }),
-  Link: record({
-    type: constant("link"),
-    url: webUrl(),
-    title: option(string()),
-    children: array(next("StaticPhrasingContent")),
-    data: data(),
-  }),
-  LinkReference: record({
-    type: constant("linkReference"),
-    identifier: string(),
-    label: option(string()),
-    referenceType: referenceType(),
-    children: array(next("StaticPhrasingContent")),
-    data: data(),
-  }),
-  Blockquote: record({
-    type: constant("blockquote"),
-    children: array(next("FlowContent")),
-    data: data(),
-  }),
-  Code: record({
-    type: constant("code"),
-    lang: option(string()),
-    meta: option(string()),
-    value: string(),
-    data: data(),
-  }),
-  Heading: record({
-    type: constant("heading"),
-    depth: oneof(
-      constant(1),
-      constant(2),
-      constant(3),
-      constant(4),
-      constant(5),
-      constant(6)
+    Content: oneof(
+      { depthFactor: 1, withCrossShrink: true },
+      next("Paragraph"),
+      next("Definition")
     ),
-    children: array(next("PhrasingContent")),
-    data: data(),
-  }),
-  HTML: record({
-    type: constant("html"),
-    value: constantFrom(...htmlTagNames).chain((tag) =>
+    ListContent: next("ListItem"),
+    PhrasingContent: oneof(
+      // links cannot be nested
+      { maxDepth: 1, withCrossShrink: true },
+      next("StaticPhrasingContent")
+    ),
+    StaticPhrasingContent: oneof(
+      { depthFactor: 1, withCrossShrink: true },
+      // terminal nodes
       oneof(
-        constant(tag).map((tag) => `<${tag}>`),
-        constant(tag).map((tag) => `</${tag}>`)
-      )
+        { depthFactor: 0, withCrossShrink: true },
+        next("Text"),
+        next("InlineCode"),
+        next("Break"),
+        next("Image"),
+        next("ImageReference")
+      ),
+      // recursive nodes
+      next("Strong"),
+      next("Emphasis")
     ),
-    data: data(),
-  }),
-  List: record({
-    type: constant("list"),
-    ordered: option(boolean()),
-    start: option(nat()),
-    spread: option(boolean()),
-    children: array(next("ListContent")),
-    data: data(),
-  }),
-  ListItem: record({
-    type: constant("listItem"),
-    spread: option(boolean()),
-    children: array(next("FlowContent")),
-    data: data(),
-  }),
-  ThematicBreak: record({ type: constant("thematicBreak"), data: data() }),
-}));
+    Definition: record({
+      type: constant("definition"),
+      identifier: string(),
+      label: option(string()),
+      url: webUrl(),
+      title: option(string()),
+      data: data(),
+    }),
+    Paragraph: record({
+      type: constant("paragraph"),
+      children: array(next("PhrasingContent")),
+      data: data(),
+    }),
+    Text: record({
+      type: constant("text"),
+      value: string(),
+      data: data(),
+    }),
+    Strong: record({
+      type: constant("strong"),
+      children: array(next("StaticPhrasingContent")),
+      data: data(),
+    }),
+    Emphasis: record({
+      type: constant("emphasis"),
+      children: array(next("StaticPhrasingContent")),
+      data: data(),
+    }),
+    Break: record({
+      type: constant("break"),
+      data: data(),
+    }),
+    Image: record({
+      type: constant("image"),
+      url: webUrl(),
+      title: option(string()),
+      alt: option(string()),
+      data: data(),
+    }),
+    InlineCode: record({
+      type: constant("inlineCode"),
+      value: string(),
+      data: data(),
+    }),
+    ImageReference: record({
+      type: constant("imageReference"),
+      identifier: string(),
+      label: option(string()),
+      referenceType: referenceType(),
+      alt: option(string()),
+      data: data(),
+    }),
+    Link: record({
+      type: constant("link"),
+      url: webUrl(),
+      title: option(string()),
+      children: array(next("StaticPhrasingContent")),
+      data: data(),
+    }),
+    LinkReference: record({
+      type: constant("linkReference"),
+      identifier: string(),
+      label: option(string()),
+      referenceType: referenceType(),
+      children: array(next("StaticPhrasingContent")),
+      data: data(),
+    }),
+    Blockquote: record({
+      type: constant("blockquote"),
+      children: array(next("FlowContent")),
+      data: data(),
+    }),
+    Code: record({
+      type: constant("code"),
+      lang: option(string()),
+      meta: option(string()),
+      value: string(),
+      data: data(),
+    }),
+    Heading: record({
+      type: constant("heading"),
+      depth: oneof(
+        constant(1),
+        constant(2),
+        constant(3),
+        constant(4),
+        constant(5),
+        constant(6)
+      ),
+      children: array(next("PhrasingContent")),
+      data: data(),
+    }),
+    HTML: record({
+      type: constant("html"),
+      value: constantFrom(...htmlTagNames).chain((tag) =>
+        oneof(
+          constant(tag).map((tag) => `<${tag}>`),
+          constant(tag).map((tag) => `</${tag}>`)
+        )
+      ),
+      data: data(),
+    }),
+    List: record({
+      type: constant("list"),
+      ordered: option(boolean()),
+      start: option(nat()),
+      spread: option(boolean()),
+      children: array(next("ListContent")),
+      data: data(),
+    }),
+    ListItem: record({
+      type: constant("listItem"),
+      spread: option(boolean()),
+      children: array(next("FlowContent")),
+      data: data(),
+    }),
+    ThematicBreak: record({ type: constant("thematicBreak"), data: data() }),
+  }));
+};

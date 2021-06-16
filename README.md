@@ -17,11 +17,27 @@ import { assert, property } from "fast-check";
 import { commonmark } from "mdast-util-arbitrary";
 
 assert(
-  property(commonmark.Root, (mdast) => {
+  property(commonmark().Root, (mdast) => {
     // do something with mdast
   })
 );
 ```
+
+## API
+
+This package exports a commonmark function which returns a dictionary of node types which can be generated (usually `Root` should be used starting node type)
+
+`commonmark(options?: Options) => {[nodeType: string]: Arbitrary}`
+
+### Options
+
+#### `Options.includeData`
+
+Whether to generate arbitrary [`data`](https://github.com/syntax-tree/unist#node) attributes for nodes. Default `false`.
+
+#### `Options.rootNodeMaxChildren`
+
+Limit the maximum number of child nodes the `Root` node can have. Default `100`.
 
 ## Example
 
@@ -43,7 +59,7 @@ import { commonmark } from "mdast-util-arbitrary";
 
 test("arbitrary mdast can be stringified", () => {
   assert(
-    property(commonmark.Root, (mdast) => {
+    property(commonmark().Root, (mdast) => {
       const markdown = toString(mdast);
       return typeof markdown === "string" && markdown.length > 1;
     }),
