@@ -9,7 +9,8 @@ test("ensure arbitrary can be stringified", () => {
     fc.property(commonmark.Root, (mdast) => {
       const markdown = toString(mdast);
       return typeof markdown === "string" && markdown.length > 1;
-    })
+    }),
+    { numRuns: 100 }
   );
 });
 

@@ -31,20 +31,23 @@ Checking three properties of `mdast-util-to-markdown`:
 
 1. it does not throw an exception on valid markdown
 2. it produces a string
-3. it produces non-empty markdown
+3. it produces non-empty markdown text
+
+Generating 100 mdast random mdast trees to see if the properties hold true.
 
 ```ts
 import { test } from "uvu";
 import toString from "mdast-util-to-markdown";
-import fc from "fast-check";
+import { assert, property } from "fast-check";
 import { commonmark } from "./index.js";
 
 test("arbitrary mdast can be stringified", () => {
-  fc.assert(
-    fc.property(commonmark.Root, (mdast) => {
+  assert(
+    property(commonmark.Root, (mdast) => {
       const markdown = toString(mdast);
       return typeof markdown === "string" && markdown.length > 1;
-    })
+    }),
+    { numRuns: 100 }
   );
 });
 
