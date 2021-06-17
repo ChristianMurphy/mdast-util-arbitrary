@@ -2,7 +2,7 @@
   "include": ["index.ts", "test.ts"],
   "compilerOptions": {
     "module": "esnext",
-    "lib": ["esnext"],
+    "lib": ["esnext", "DOM"],
     "target": "ES2016",
     "declaration": true,
     "sourceMap": true,

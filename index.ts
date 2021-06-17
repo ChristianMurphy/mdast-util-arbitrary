@@ -20,8 +20,8 @@ import { htmlTagNames } from "html-tag-names";
 const string = () =>
   oneof(
     { withCrossShrink: true },
-    _string({ minLength: 1 }),
-    _unicodeString({ minLength: 1 })
+    _string({ minLength: 1 }).filter((text) => !/^\s$/.test(text)),
+    _unicodeString({ minLength: 1 }).filter((text) => !/^\s$/.test(text))
   );
 const array = <T>(arb: Arbitrary<T>) =>
   _array(arb, { minLength: 1, maxLength: 5 });
