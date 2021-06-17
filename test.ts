@@ -24,7 +24,8 @@ function countNodesByType(mdast: Node) {
 
 test("detect round trip issues", () => {
   fc.assert(
-    fc.property(commonmark().Root, (mdast) => {
+    fc.property(commonmark().Root, (_mdast) => {
+      const mdast = fromMarkdownText(toMarkdownText(_mdast));
       const original = countNodesByType(
         compact(squeezeParagraphs(compact(mdast)))
       );
