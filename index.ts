@@ -20,8 +20,14 @@ import { htmlTagNames } from "html-tag-names";
 const string = () =>
   oneof(
     { withCrossShrink: true },
-    _string({ minLength: 1 }).filter((text) => !/^\s$/.test(text)),
-    _unicodeString({ minLength: 1 }).filter((text) => !/^\s$/.test(text))
+    _string({ minLength: 1 })
+      .filter((text) => !/^\s+$/.test(text))
+      .filter((text) => /[a-zA-Z]/.test(text))
+      .map((text) => ` ${text} `),
+    _unicodeString({ minLength: 1 })
+      .filter((text) => !/^\s+$/.test(text))
+      .filter((text) => /[a-zA-Z]/.test(text))
+      .map((text) => ` ${text} `)
   );
 const array = <T>(arb: Arbitrary<T>) =>
   _array(arb, { minLength: 1, maxLength: 5 });
@@ -124,12 +130,16 @@ export const commonmark = ({
     }),
     Strong: record({
       type: constant("strong"),
-      children: array(next("StaticPhrasingContent")),
+      children: array(next("StaticPhrasingContent")).filter((list) =>
+        (list as { type: string }[]).some(({ type }) => type !== "break")
+      ),
       data: data(),
     }),
     Emphasis: record({
       type: constant("emphasis"),
-      children: array(next("StaticPhrasingContent")),
+      children: array(next("StaticPhrasingContent")).filter((list) =>
+        (list as { type: string }[]).some(({ type }) => type !== "break")
+      ),
       data: data(),
     }),
     Break: record({
