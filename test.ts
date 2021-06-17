@@ -3,6 +3,7 @@ import { test } from "uvu";
 import toMarkdownText from "mdast-util-to-markdown";
 // @ts-ignore cjs-esm conflict
 import remark from "remark";
+import { VFile } from "vfile";
 // @ts-ignore no typings
 import lintRecommended from "remark-preset-lint-recommended";
 // @ts-ignore no typings
@@ -49,7 +50,9 @@ test("includeData with mdast-util-to-markdown", () => {
 test("commonmark with remark-preset-lint-recommended", () => {
   fc.assert(
     fc.property(commonmark().Root, (mdast) => {
-      remark().use(lintRecommended).runSync(mdast);
+      remark()
+        .use(lintRecommended)
+        .processSync(new VFile(toMarkdownText(mdast)));
       return true;
     }),
     { numRuns: 10 }
@@ -59,7 +62,9 @@ test("commonmark with remark-preset-lint-recommended", () => {
 test("commonmark with remark-preset-lint-markdown-style-guide", () => {
   fc.assert(
     fc.property(commonmark().Root, (mdast) => {
-      remark().use(lintStyleguide).runSync(mdast);
+      remark()
+        .use(lintStyleguide)
+        .processSync(new VFile(toMarkdownText(mdast)));
       return true;
     }),
     { numRuns: 10 }
@@ -69,7 +74,9 @@ test("commonmark with remark-preset-lint-markdown-style-guide", () => {
 test("commonmark with remark-preset-lint-consistent", () => {
   fc.assert(
     fc.property(commonmark().Root, (mdast) => {
-      remark().use(lintConsistent).runSync(mdast);
+      remark()
+        .use(lintConsistent)
+        .processSync(new VFile(toMarkdownText(mdast)));
       return true;
     }),
     { numRuns: 10 }
