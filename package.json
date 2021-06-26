@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "clean": "rimraf \"./*.d.ts\" \"./*.js\" \"./*.map\"",
     "build": "npm run clean && patch-package && tsc",
-    "prepare": "npm run build"
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
