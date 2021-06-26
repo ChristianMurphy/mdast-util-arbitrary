@@ -1,6 +1,6 @@
 {
   "name": "mdast-util-arbitrary",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Generate arbitrary mdast with fast check",
   "type": "module",
   "sideEffects": false,
