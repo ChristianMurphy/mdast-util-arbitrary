@@ -5,6 +5,10 @@
   "type": "module",
   "sideEffects": false,
   "main": "index.js",
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
     "test": "npm run clean && node --loader ts-node/esm ./test.ts",
     "lint": "prettier --check .",
